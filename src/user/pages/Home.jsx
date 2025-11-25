@@ -6,7 +6,7 @@ import { FaSearch } from 'react-icons/fa'
 function Home() {
   return (
     <>
-    <Header></Header>
+    <Header></Header>   
     <div>
       {/* Landing page -search */}
       <div className="flex justify-center items-center flex-col bg-center bg-cover" style={{height:"500px",backgroundImage:"url(/bg-home.jpg)"}} >
