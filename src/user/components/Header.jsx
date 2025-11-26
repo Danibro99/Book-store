@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { FaBars, FaUser } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
-
+import { FaInstagram,FaFacebook } from 'react-icons/fa'
+import { FaXTwitter } from 'react-icons/fa6'
 
 
 function Header() {
@@ -14,8 +15,18 @@ function Header() {
     <div className="grid grid-cols-3 p-2">
       <div className="flex items-center">
         {/* logo and title */}
-        <img className='h-20 rounded' src="/logo1.jpg" alt="logo" />
+        <img className='h-15 rounded' src="/logo1.jpg" alt="logo" />
         <h1 className='text-2xl font-bold ms-1 md:hidden'>BOOK STORE</h1>
+      </div>
+      <div className="md:flex justify-center items-center hidden">
+        <h1 className="text-3xl font-bold">BOOK STORE</h1>
+      </div>
+      {/* login btn */}
+      <div className="md:flex justify-end items-center hidden">
+        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaInstagram/> </a>
+        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaFacebook className='mx-2'/> </a>
+        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaXTwitter/> </a>
+        <Link to={'/login'} className='ms-4 border rounded p-2 hover:bg-black hover:text-white flex items-center'><FaUser className='me-1'/> Login</Link>
       </div>
     </div>
     {/* lower part -links and menu + login btn */}
