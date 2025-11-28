@@ -3,7 +3,7 @@ import Header from '../user/components/Header'
 import Foooter from '..//components/Foooter'
 function Preloder() {
   return (
-    <div className='flex justify-center items-center'>
+    <div className='flex justify-center items-center h-screen'>
       <img src="/book1.gif" alt="preloader" />
     </div>
   )
