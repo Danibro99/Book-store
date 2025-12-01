@@ -1,11 +1,30 @@
 import React, { useState } from 'react'
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { Bounce, toast, ToastContainer } from 'react-toastify'
+
 
 
 function Aunth({insideRegister}) {
 
   const [viewPassword,setViewPassword]=useState(false)
+
+  const [userData,setUserData]=useState({
+    username:"",
+    email:"",
+    password:""
+  })
+  console.log(userData);
+  
+  const HandleRegister =(e)=>{
+    e.preventDefault()
+    const {username,email,password}=userData
+    if(username && email &&password){
+      toast.success("API Call")
+    }else{
+      toast.info("Please fill the form completetly")
+    }
+  }
 
   
   return (
@@ -21,13 +40,13 @@ function Aunth({insideRegister}) {
               {/* username */}
               {
                 insideRegister &&
-                <input type="text" placeholder='Username' className='bg-white text-black placeholder-gray-400 w-full rounded p-2 mb-5 ' />
+                <input type="text" value={userData.username} onChange={(e)=>setUserData({...userData, username: e.target.value})} placeholder='Username' className='bg-white text-black placeholder-gray-400 w-full rounded p-2 mb-5 ' />
               }
               {/* email */}
-              <input type="text" placeholder='E-mail ID' className='bg-white text-black placeholder-gray-400 w-full rounded p-2 mb-5 ' />
+              <input type="email" value={userData.email} onChange={(e)=>setUserData({...userData, email: e.target.value})}  placeholder='E-mail ID' className='bg-white text-black placeholder-gray-400 w-full rounded p-2 mb-5 ' />
               <div className="flex items-center">
                 {/* password */}
-                <input type={viewPassword? "text":"password"} placeholder='Password' className='bg-white text-black placeholder-gray-400 w-full rounded p-2 mb-5 ' />
+                <input value={userData.password} onChange={(e)=>setUserData({...userData, password: e.target.value})}  type={viewPassword? "text":"password"} placeholder='Password' className='bg-white text-black placeholder-gray-400 w-full rounded p-2 mb-5 ' />
                 {
                   viewPassword?
                   <FaEyeSlash onClick={()=>setViewPassword(!viewPassword)} className='text-gray-400 cursor-pointer' style={{marginLeft:"-30px",marginTop:"-15px"}}/>:
@@ -46,9 +65,9 @@ function Aunth({insideRegister}) {
               <div className="text-center">
                 {
                   insideRegister ?
-                  <button type='button'className='bg-green-700 p-2 w-full rounded' >Register</button>
+                  <button type='button' className='bg-green-700 p-2 w-full rounded' onClick={()=>HandleRegister()} >Register</button>
                   :
-                  <button type='button'className='bg-green-700 p-2 w-full rounded' >Login</button>
+                  <button type='button' className='bg-green-700 p-2 w-full rounded' >Login</button>
                 }
               </div>
               {/* google authentication */}
@@ -62,6 +81,19 @@ function Aunth({insideRegister}) {
             </form>
           </div>
         </div>
+        <ToastContainer
+position="top-center"
+autoClose={4000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+transition={Bounce}
+/>
     </div>
   )
 }
