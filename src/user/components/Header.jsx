@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { FaBars, FaUser } from 'react-icons/fa'
+import React, { useEffect, useState } from 'react'
+import { FaAddressCard, FaBars, FaPowerOff, FaUser } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { FaInstagram,FaFacebook } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
@@ -8,7 +8,18 @@ import { FaXTwitter } from 'react-icons/fa6'
 function Header() {
     const [listStatus,setListStatus]=useState(false)
     const menuBtnclick=()=>{setListStatus(!listStatus)}
+    const [dp,setDp] = useState("")
+    const [token,setToken] = useState("")
+    const [dropdown,setDropdown] = useState(false)
 
+    useEffect(()=>{
+      if(sessionStorage.getItem("token")){
+        const userToken = sessionStorage.getItem("token")
+        setToken(userToken)
+        const user = JSON.parse(sessionStorage.getItem("user"))
+        setDp(user.profilepic)
+      }
+    },[token])
   return (
     <>
     {/* upper part- title and logo */}
@@ -23,10 +34,26 @@ function Header() {
       </div>
       {/* login btn */}
       <div className="md:flex justify-end items-center hidden">
-        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaInstagram/> </a>
-        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaFacebook className='mx-2'/> </a>
-        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaXTwitter/> </a>
-        <Link to={'/login'} className='ms-4 border rounded p-2 hover:bg-black hover:text-white flex items-center'><FaUser className='me-1'/> Login</Link>
+        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaInstagram/></a>
+        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaFacebook className='mx-2'/></a>
+        <a href="https://www.instagram.com/nashif.me" target='_blank'> <FaXTwitter/></a>
+      { 
+        !token?
+        <Link to={'/login'} className='ms-4 border rounded p-2 hover:bg-black hover:text-white flex items-center'> <FaUser className='me-1'/> Login</Link>
+        :
+        <div className="relative inline-block text-left ms-5">
+          <button className='w-full bg-white px-3 py-2 shadow hover:bg-gray-50' onClick={()=>setDropdown(!dropdown)}>
+            <img width={"40px"} height={"40px"} style={{borderRadius:"50%"}} src="https://img.freepik.com/free-photo/business-man-by-skyscraper_1303-13655.jpg?semt=ais_hybrid&w=740&q=80" alt="" />
+          </button>
+          {
+            dropdown == true &&
+            <div className="absolute right-0 z-10 mt-2 w-40 rounded-md bg-white shadow-lg origin-top-right ring-1 ring-black/5 focus:outline-hidden">
+            <Link to={'/user/profile'} className='px-4 py-2 text-sm text-gray-700 flex items-center'><FaAddressCard className='me-2'/>Profile</Link>
+            <button className='px-4 py-2 text-sm text-gray-700 flex items-center'><FaPowerOff className='me-2'/>Logout</button>
+          </div>
+          }
+        </div> 
+      }
       </div>
     </div>
     {/* lower part -links and menu + login btn */}
@@ -36,7 +63,23 @@ function Header() {
         {/* menu bar btn */}
         <button onClick={menuBtnclick} className='cursor-pointer'><FaBars/></button>
         {/* login link */}
-        <Link to={'/login'} className='ms-4 border rounded px-2 py-1 hover:bg-white hover:text-black flex items-center'> <FaUser className='me-1'/> Login</Link>
+         { 
+        !token?
+        <Link to={'/login'} className='ms-4 border rounded p-2 hover:bg-black hover:text-white flex items-center'> <FaUser className='me-1'/> Login</Link>
+        :
+        <div className="relative inline-block text-left ms-5">
+          <button className='w-full bg-white px-3 py-2 shadow hover:bg-gray-50' onClick={()=>setDropdown(!dropdown)}>
+            <img width={"40px"} height={"40px"} style={{borderRadius:"50%"}} src="https://img.freepik.com/free-photo/business-man-by-skyscraper_1303-13655.jpg?semt=ais_hybrid&w=740&q=80" alt="" />
+          </button>
+          {
+            dropdown == true &&
+            <div className="absolute right-0 z-10 mt-2 w-40 rounded-md bg-white shadow-lg origin-top-right ring-1 ring-black/5 focus:outline-hidden">
+            <Link to={'/user/profile'} className='px-4 py-2 text-sm text-gray-700 flex items-center'><FaAddressCard className='me-2'/>Profile</Link>
+            <button className='px-4 py-2 text-sm text-gray-700 flex items-center'><FaPowerOff className='me-2'/>Logout</button>
+          </div>
+          }
+        </div> 
+      }
       </div>
       {/* ul links */}
       <ul className={listStatus ? "flex flex-col" : "md:flex justify-center items-center hidden"}>
@@ -44,7 +87,6 @@ function Header() {
         <li className='mt-3 md:mx-4 md:mt-0'><Link to={'/books'}>BOOKS</Link></li>
         <li className='mt-3 md:mx-4 md:mt-0'><Link to={'/contact'}>CONTACT</Link></li>
       </ul>
-
     </nav>
     </>
   )

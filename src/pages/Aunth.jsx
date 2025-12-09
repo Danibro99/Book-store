@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Bounce, toast, ToastContainer } from 'react-toastify'
-
+import { loginAPI, registerAPI } from '../services/allAPI'
+import { GoogleLogin } from '@react-oauth/google'
+import {jwtDecode} from 'jwt-decode'
 
 
 function Aunth({insideRegister}) {
@@ -15,21 +17,76 @@ function Aunth({insideRegister}) {
     password:""
   })
   console.log(userData);
+  const navigate = useNavigate()
   
-  const HandleRegister =(e)=>{
+  const HandleRegister = async(e)=>{
     e.preventDefault()
     const {username,email,password}=userData
     if(username && email &&password){
-      toast.success("API Call")
+      // toast.success("API Call")
+      try{
+        const result = await registerAPI(userData)
+        if(result.status==201){
+          toast.success("Registration completed successfully... Please Login")
+          setUserData({username:"",email:"",password:""})
+          navigate('/login')
+        }else if(result.status==409){
+          toast.warning(result.response.data)
+          setUserData({username:"",email:"",password:""})
+          navigate('/login')
+        }else{
+          console.log(result);
+          toast.error("Sometghing went wrong")
+          setUserData({username:"",email:"",password:""})
+        }
+      }catch(err){
+        console.log(err);
+      }
     }else{
       toast.info("Please fill the form completetly")
     }
   }
 
+  const HandleLogin = async(e)=>{
+    e.preventDefault()
+    const {email,password} = userData 
+    if(email && password){
+      try{
+        const result = await loginAPI(userData)
+        if(result.status==200){
+          toast.success("Login Complete")
+          sessionStorage.setItem("token",result.data.token)
+          sessionStorage.setItem("user",JSON.stringify(result.data.user))
+          setTimeout(()=>{
+            if(result.data.user.role == "admin"){
+              navigate('/admin/home')
+            }else{
+              navigate('/')
+            }
+          },2000)
+        }else if(result.status == 401 || result.status == 404){
+          toast.warning(result.response.data)
+          setUserData({username:"",email:"",password:""})
+        }else{
+          toast.error("Something went wrong!!!")
+          setUserData({username:"",email:"",password:""})
+        }
+      }catch(err){
+        console.log(err);
+      }
+    }
+  }
+
+  const handleGoogleLogin= async(credentialResponse)=>{
+    console.log(credentialResponse);
+    console.log("inside HandleGoogleLogin");
+    const decode = jwtDecode(credentialResponse.credential)
+    console.log(decode);
+  }
   
   return (
     <div className='w-full min-h-screen flex justify-center items-center flex-col bg-[url(bg-auth.jpg)] bg-cover bg-center'>
-        <div className="p-10">\
+        <div className="p-10">
           <h1 className="text-3xl font-bold text-white text-center">Book Store</h1>
           <div className="bg-black text-white p-5 flex flex-col justify-center items-center my-5" style={{width:'400px'}}>
             <div className="border mb-5  flex justify-center items-center" style={{width:"100px",height:"100px",borderRadius:"50%"}}>
@@ -58,19 +115,37 @@ function Aunth({insideRegister}) {
                 !insideRegister &&
                 <div className="flex justify-between mb-5">
                   <p className='text-xs text-orange-300'>Never Share Your Password with anyone</p>
-                  <button className='text-xs underline'>Forgot Password</button>
+                  <button type='button' className='text-xs underline'>Forgot Password</button>
                 </div>
               }
               {/* login and register button */}
               <div className="text-center">
                 {
                   insideRegister ?
-                  <button type='button' className='bg-green-700 p-2 w-full rounded' onClick={()=>HandleRegister()} >Register</button>
+                  <button type='button' className='bg-green-700 p-2 w-full rounded' onClick={(e)=>HandleRegister(e)} >Register</button>
                   :
-                  <button type='button' className='bg-green-700 p-2 w-full rounded' >Login</button>
+                  <button type='button' className='bg-green-700 p-2 w-full rounded' onClick={(e)=>HandleLogin(e)} >Login</button>
                 }
               </div>
-              {/* google authentication */}
+              {/* google authentication */}  
+            <div className='text-center my-5'>
+               {
+                !insideRegister &&<p >------------------------or------------------------</p>}
+                {
+                  !insideRegister &&            
+                  <div className='my-5 flex justify-center items-center w-full'>
+                    <GoogleLogin
+                      onSuccess={credentialResponse => {
+                        handleGoogleLogin(credentialResponse)
+                      }}
+                      onError={() => {
+                        console.log('Login Failed');
+                      }}
+                    />
+                  </div>
+                }
+            </div>
+              
               <div className="my-5 text-center">
                 {
                   insideRegister?
@@ -83,7 +158,7 @@ function Aunth({insideRegister}) {
         </div>
         <ToastContainer
 position="top-center"
-autoClose={4000}
+autoClose={2000}
 hideProgressBar={false}
 newestOnTop={false}
 closeOnClick={false}
