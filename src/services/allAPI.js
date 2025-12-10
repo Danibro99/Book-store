@@ -10,3 +10,8 @@ import serverURL from "./serverURL"
     export const loginAPI = async(userData)=>{
         return await commonAPI("POST",`${serverURL}/login`,userData)
     }
+
+//google login API
+    export const googleLoginAPI = async(userData)=>{
+        return await commonAPI("POST",`${serverURL}/google/sign-in`,userData)
+    }

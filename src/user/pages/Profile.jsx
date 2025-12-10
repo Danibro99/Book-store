@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header' 
 import Foooter from '../../components/Foooter'
 import { FaCircleCheck } from 'react-icons/fa6'
@@ -11,6 +11,20 @@ import Bookstatus from '../components/Bookstatus'
 function Profile() {
 
   const [tab,setTab]=useState(1)
+  const [dp,setDp] = useState("")
+  const [username,setUSername] = useState("")
+  console.log(dp);
+  
+
+  useEffect(()=>{
+    if(sessionStorage.getItem("token") && sessionStorage.getItem("user")){
+      const user = JSON.parse(sessionStorage.getItem("user"))
+      console.log(user);
+      
+      setDp(user?.profilepic)
+      setUSername(user.username)
+    }
+  },[])
 
   return (
     <>
@@ -19,10 +33,10 @@ function Profile() {
     <div style={{height:"200px"}} className="bg-black"></div>
       {/* profile image */}
     <div className="bg-white p-3" style={{width:"230px",height:"230px",borderRadius:"50%",marginLeft:"70px",marginTop:"-130px"}}>
-    <img style={{width:"200px",height:"200px",borderRadius:"50%"}} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPhtdO_3HLpDMCdrlnK9AjcBcHFMKy7lt0rA&s" alt="profile" />
+    <img style={{width:"200px",height:"200px",borderRadius:"50%"}} src={dp?dp:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPhtdO_3HLpDMCdrlnK9AjcBcHFMKy7lt0rA&s"} alt="profile" />
     </div>
     <div className="md:flex justify-between items-center md:px-20 px-5 my-5">
-    <h1 className="text-2xl font-bold flex items-center mx-5 md:mx-20">Username  <FaCircleCheck className='text-blue-700 ms-5'/></h1>
+    <h1 className="text-2xl font-bold flex items-center mx-5 md:mx-20">{username && username}  <FaCircleCheck className='text-blue-700 ms-5'/></h1>
     <Edit/>
     </div>
     <p className='text-justify md:px-20 px-5 my-5'>I’m someone who finds comfort, inspiration, and adventure in books.

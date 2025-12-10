@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { Bounce, toast, ToastContainer } from 'react-toastify'
-import { loginAPI, registerAPI } from '../services/allAPI'
+import { googleLoginAPI, loginAPI, registerAPI } from '../services/allAPI'
 import { GoogleLogin } from '@react-oauth/google'
 import {jwtDecode} from 'jwt-decode'
+
 
 
 function Aunth({insideRegister}) {
@@ -82,7 +83,23 @@ function Aunth({insideRegister}) {
     console.log("inside HandleGoogleLogin");
     const decode = jwtDecode(credentialResponse.credential)
     console.log(decode);
-  }
+    const result = await googleLoginAPI({username:decode.name,email:decode.email,password:"goooglePassword",profilepic:decode.picture})
+    if(result.status==200){
+          toast.success("Login Complete")
+          sessionStorage.setItem("token",result.data.token)
+          sessionStorage.setItem("user",JSON.stringify(result.data.user))
+          setTimeout(()=>{
+            if(result.data.user.role == "admin"){
+              navigate('/admin/home')
+            }else{
+              navigate('/')
+            }
+          },2000)
+        }else{
+          console.log(result);
+          toast.error("Something went wrong")
+        }
+      }
   
   return (
     <div className='w-full min-h-screen flex justify-center items-center flex-col bg-[url(bg-auth.jpg)] bg-cover bg-center'>
