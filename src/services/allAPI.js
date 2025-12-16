@@ -15,3 +15,8 @@ import serverURL from "./serverURL"
     export const googleLoginAPI = async(userData)=>{
         return await commonAPI("POST",`${serverURL}/google/sign-in`,userData)
     }
+
+//add book api
+    export const addBookAPI = async(reqBody,reqHeader)=>{
+        return await commonAPI("POST",`${serverURL}/user/books/add`,reqBody,reqHeader)
+    }

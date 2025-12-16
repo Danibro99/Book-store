@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
-
+import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { addBookAPI } from '../../services/allAPI';
 
 function SellBook() {
 
@@ -20,6 +21,62 @@ function SellBook() {
   })
 
   console.log(bookDetails);
+
+  //reset bookupload form
+
+  const resetBookUpload =()=>{
+    setBookDetails({
+    title:"",
+    author:"",
+    pages:"",
+    imageURL:"",
+    price:"",
+    discountPrice:"",
+    abstract:"",
+    language:"",
+    publisher:"",
+    isbn:"",
+    category:"",
+    uploadIMG:[]
+  })
+   setPreview("")
+  setPreviewList([])
+  }
+  const handleBookUpload = async ()=>{
+    const {title, author, pages, imageURL, price, discountPrice, abstract, language, publisher, isbn, category,uploadIMG} = bookDetails
+    if(!title || !author || !pages || !imageURL || !price || !discountPrice || !abstract || !language || !publisher || !isbn || !category || uploadIMG.length==0){
+      toast.warning("Form Not Complete!!!Please completely fill the form...")
+    }else{
+        //api call -get token
+        const token = sessionStorage.getItem("token")
+        if(token){
+          const reqHeader = {
+            "Authorization":`Bearer ${token}`
+          }
+          const reqBody = new FormData()
+          for(let key in bookDetails){
+            if(key != "uploadIMG"){
+              reqBody.append(key,bookDetails[key])
+            }else{
+              bookDetails.uploadIMG.forEach(imgFile=>{
+                reqBody.append("uploadIMG",imgFile)
+              })
+            }
+          }
+          const result = await addBookAPI(reqBody,reqHeader)
+          console.log(result);
+          if(result.status==200){
+            toast.success("Book Added Successfully!!!")
+          }else if(result.status==401){
+            toast.error(result.response.data)
+          }else{
+            toast.error("Something went wrong!!!")
+          }
+          resetBookUpload()
+          }
+    }
+  }
+ 
 
   const [preview,setPreview] = useState("")
   const [previewList,setPreviewList] = useState([])
@@ -106,10 +163,23 @@ function SellBook() {
         </div>
       </div>
       <div className="flex justify-end mt-5">
-        <button className='bg-gray-600 text-white p-2 rounded me-5 hover:bg-white hover:text-gray-400'>RESET</button>
-        <button className='bg-blue-600 text-white p-2 rounded hover:bg-white hover:text-blue-400'>SUBMIT</button>
+        <button onClick={resetBookUpload} className='bg-gray-600 text-white p-2 rounded me-5 hover:bg-white hover:text-gray-400'>RESET</button>
+        <button onClick={handleBookUpload} className='bg-blue-600 text-white p-2 rounded hover:bg-white hover:text-blue-400'>SUBMIT</button>
       </div>
     </div>
+    <ToastContainer
+position="top-center"
+autoClose={2000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+transition={Bounce}
+/>
     </div>
   )
 }
