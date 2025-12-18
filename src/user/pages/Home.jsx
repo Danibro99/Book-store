@@ -1,13 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Foooter from '../../components/Foooter'
 import { FaSearch } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { Bounce, toast, ToastContainer } from 'react-toastify'
+import { getHomepageBooksAPI } from '../../services/allAPI'
 
 
 function Home() {
   const [searchKey,setSearchKey] = useState("")
+  const [homeBooks,setHomeBooks]= useState([])
+  console.log(homeBooks);
+  
+  useEffect(()=>{
+    getHomePgeBooks()
+  },[])
+
+  const getHomePgeBooks = async ()=>{
+    const result = await getHomepageBooksAPI()
+    // console.log(result);
+    if(result.status==200){
+      setHomeBooks(result.data)
+    }else{
+      console.log(result);
+    }
+    
+  }
   const navigate = useNavigate()
   const handleSearch=()=>{
     if(!searchKey){
@@ -23,6 +41,8 @@ function Home() {
       toast.error("Something went wrong!!!")
     }
   }
+
+
   return (
     <>
     <Header></Header>   
@@ -44,43 +64,23 @@ function Home() {
         <h1 className="text-3xl font-bold">New Arrivals</h1>
         <h2 className='text-2xl'>Explore our latest collection</h2>
         {/* books row & col */}
-        <div className="md:grid grid-cols-4 w-full mt-10">
+        <div className="md:grid grid-cols-4 w-full mt-10 sm:justify-center items-center flex flex-col">
           {/* duplicate book cards */}
-          <div className="shadow rounded p-3 mx-4 mb-5 md:mb-0 items-center">
-            <img src="https://m.media-amazon.com/images/I/617lxveUjYL.jpg" width={'300px'} height={'300px'} alt="books" />
+          {
+            homeBooks?.length>0?
+            homeBooks?.map(book=>(
+              <div key={book?._id} className="shadow rounded p-3 mx-4 mb-5 md:mb-0 items-center">
+            <img src={book?.imageURL} width={'300px'} height={'300px'} alt="books" />
             <div className="flex justify-center items-center flex-col mt-4">
-              <h3 className="text-blue-600 font-bold text-lg">Author</h3>
-              <h4 className="text-lg">title</h4>
-              <h4>Price</h4>
+              <h3 className="text-blue-600 font-bold text-lg">{book?.author}</h3>
+              <h4 className="text-[15px]">{book?.title}</h4>
+              <h4 className='text-green-700'>${book?.discountPrice}</h4>
             </div>
           </div>
-           {/* duplicate book cards */}
-          <div className="shadow rounded p-3 mx-4">
-            <img src="https://m.media-amazon.com/images/I/617lxveUjYL.jpg" width={'300px'} height={'300px'} alt="books" />
-            <div className="flex justify-center items-center flex-col mt-4">
-              <h3 className="text-blue-600 font-bold text-lg">Author</h3>
-              <h4 className="text-lg">title</h4>
-              <h4>Price</h4>
-            </div>
-          </div>
-           {/* duplicate book cards */}
-          <div className="shadow rounded p-3 mx-4">
-            <img src="https://m.media-amazon.com/images/I/617lxveUjYL.jpg" width={'300px'} height={'300px'} alt="books" />
-            <div className="flex justify-center items-center flex-col mt-4">
-              <h3 className="text-blue-600 font-bold text-lg">Author</h3>
-              <h4 className="text-lg">title</h4>
-              <h4>Price</h4>
-            </div>
-          </div>
-           {/* duplicate book cards */}
-          <div className="shadow rounded p-3 mx-4">
-            <img src="https://m.media-amazon.com/images/I/617lxveUjYL.jpg" width={'300px'} height={'300px'} alt="books" />
-            <div className="flex justify-center items-center flex-col mt-4">
-              <h3 className="text-blue-600 font-bold text-lg">Author</h3>
-              <h4 className="text-lg">title</h4>
-              <h4>Price</h4>
-            </div>
-          </div>
+            ))
+            :
+            <p className='font-bold'>Loading...</p>
+            }
         </div>
         <div className="text-center mt-10">
           <Link to={'/books'} className="p-3 bg-black text-white">Explore More...</Link>
