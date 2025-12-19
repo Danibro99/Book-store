@@ -20,7 +20,7 @@ function SellBook() {
     uploadIMG:[]
   })
 
-  console.log(bookDetails);
+  // console.log(bookDetails);
 
   //reset bookupload form
 

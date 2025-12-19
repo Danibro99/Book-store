@@ -36,7 +36,7 @@ function Bookstatus() {
           <div className="">
           <h2 className='text-2xl'>{book?.title}</h2>
             <h3 className='text-xl'>{book?.author}</h3>
-            <h4 className='text-lg text-red-500'>Price</h4>
+            <h4 className='text-lg text-red-500'>$ {book?.price}</h4>
             <p className='text-justify'>{book?.abstract}</p>
             <div className="flex mt-5">
             {

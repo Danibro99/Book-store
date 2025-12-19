@@ -13,13 +13,13 @@ function Profile() {
   const [tab,setTab]=useState(1)
   const [dp,setDp] = useState("")
   const [username,setUSername] = useState("")
-  console.log(dp);
+  // console.log(dp);
   
 
   useEffect(()=>{
     if(sessionStorage.getItem("token") && sessionStorage.getItem("user")){
       const user = JSON.parse(sessionStorage.getItem("user"))
-      console.log(user);
+      // console.log(user);
       
       setDp(user?.profilepic)
       setUSername(user.username)

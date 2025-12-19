@@ -27,11 +27,16 @@ export const getHomepageBooksAPI = async()=>{
     }
 
 //userhome page API called by books component when the page is initially loaded
-export const getAllBooksForUserAPI = async(reqHeader)=>{
-        return await commonAPI("GET",`${serverURL}/books/all`,{},reqHeader)
+export const getAllBooksForUserAPI = async(reqHeader,searchKey)=>{
+        return await commonAPI("GET",`${serverURL}/books/all?search=${searchKey}`,{},reqHeader)
     }
 
-//userhome page API called by books component when the page is initially loaded
+//API called by Bookstatus component when the page is initially loaded to see the status of the user uploaded books 
 export const getUserUploadBooksAPI = async(reqHeader)=>{
         return await commonAPI("GET",`${serverURL}/user-books/all`,{},reqHeader)
+    }
+
+///user-books/bought  API called by books component when the page is initially loaded to see the list books user bought
+ export const getUserBoughtBooksAPI = async(reqHeader)=>{
+        return await commonAPI("GET",`${serverURL}/user-books/bought`,{},reqHeader)
     }
